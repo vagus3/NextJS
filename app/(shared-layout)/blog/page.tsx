@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { api } from "@/convex/_generated/api";
-import Link from "next/dist/client/link";
+import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { fetchQuery } from "convex/nextjs";
 import { Suspense } from "react";
@@ -11,7 +11,7 @@ import { Metadata } from "next";
 import { connection } from "next/server";
 import { cacheLife, cacheTag } from "next/cache";
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 export const revalidate = 30;
 
 export const metadata: Metadata = {
@@ -88,7 +88,7 @@ async function LoadBlogList() {
 
 function SkeletonLoadingUi() {
     return (
-        <div className="grid gap-5 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid gap-5 md:grid-cols-3 lg:grid-cols-3">
                     {[...Array(6)].map((_, index) => (
                         <div key={index} className="flex flex-col space-y-3">
                         <Skeleton className="h-48 w-full rounded-xl" />
@@ -96,6 +96,7 @@ function SkeletonLoadingUi() {
                         <Skeleton className="h-6 w-3/4" />
                         <Skeleton className="h-4 w-full" />
                         <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-10 w-full mt-2" />
                         </div>
                     </div>
                     ))}
