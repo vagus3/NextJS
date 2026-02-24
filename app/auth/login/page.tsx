@@ -35,9 +35,10 @@ export default function LoginPage() {
   });
 
   function onSubmit(data: z.infer<typeof loginSchema>) {
+    const normalizedEmail = data.email.trim().toLowerCase();
     startTransition(() => {
       void authClient.signIn.email({
-        email: data.email,
+        email: normalizedEmail,
         password: data.password,
         fetchOptions: {
           onSuccess: () => {
@@ -68,7 +69,16 @@ export default function LoginPage() {
               render={({ field, fieldState }) => (
                 <Field>
                   <FieldLabel>Email</FieldLabel>
-                  <Input aria-invalid={fieldState.invalid} placeholder="john@example.com" {...field} />
+                  <Input
+                    type="email"
+                    autoComplete="username"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    aria-invalid={fieldState.invalid}
+                    placeholder="john@example.com"
+                    {...field}
+                  />
                   {fieldState.invalid && (
                     <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                   )}
@@ -81,7 +91,13 @@ export default function LoginPage() {
               render={({ field, fieldState }) => (
                 <Field>
                   <FieldLabel>Password</FieldLabel>
-                  <Input aria-invalid={fieldState.invalid} placeholder="******" {...field} />
+                  <Input
+                    type="password"
+                    autoComplete="current-password"
+                    aria-invalid={fieldState.invalid}
+                    placeholder="******"
+                    {...field}
+                  />
                   {fieldState.invalid && (
                     <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                   )}
