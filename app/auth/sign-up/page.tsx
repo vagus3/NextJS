@@ -36,10 +36,11 @@ export default function SignUpPage() {
   });
 
   function onSubmit(data: z.infer<typeof signUpSchema>) {
+    const normalizedEmail = data.email.trim().toLowerCase();
     startTransition(() => {
       void authClient.signUp.email({
-        name: data.name,
-        email: data.email,
+        name: data.name.trim(),
+        email: normalizedEmail,
         password: data.password,
         fetchOptions: {
           onSuccess: () => {
@@ -62,7 +63,7 @@ export default function SignUpPage() {
         <CardDescription>Sign up to create an account</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form onSubmit={form.handleSubmit(onSubmit)} autoComplete="off">
           <FieldGroup>
             <Controller
               name="name"
@@ -70,20 +71,13 @@ export default function SignUpPage() {
               render={({ field, fieldState }) => (
                 <Field>
                   <FieldLabel>Name</FieldLabel>
-                  <Input aria-invalid={fieldState.invalid} placeholder="Name" {...field} />
-                  {fieldState.invalid && (
-                    <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
-                  )}
-                </Field>
-              )}
-            />
-            <Controller
-              name="password"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field>
-                  <FieldLabel>Password</FieldLabel>
-                  <Input aria-invalid={fieldState.invalid} placeholder="******" {...field} />
+                  <Input
+                    type="text"
+                    autoComplete="off"
+                    aria-invalid={fieldState.invalid}
+                    placeholder="Name"
+                    {...field}
+                  />
                   {fieldState.invalid && (
                     <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                   )}
@@ -96,7 +90,35 @@ export default function SignUpPage() {
               render={({ field, fieldState }) => (
                 <Field>
                   <FieldLabel>Email</FieldLabel>
-                  <Input aria-invalid={fieldState.invalid} placeholder="john@example.com" {...field} />
+                  <Input
+                    type="email"
+                    autoComplete="username"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    aria-invalid={fieldState.invalid}
+                    placeholder="john@example.com"
+                    {...field}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                  )}
+                </Field>
+              )}
+            />
+            <Controller
+              name="password"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field>
+                  <FieldLabel>Password</FieldLabel>
+                  <Input
+                    type="password"
+                    autoComplete="new-password"
+                    aria-invalid={fieldState.invalid}
+                    placeholder="******"
+                    {...field}
+                  />
                   {fieldState.invalid && (
                     <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                   )}
