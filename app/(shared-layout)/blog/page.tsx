@@ -11,7 +11,7 @@ import { Metadata } from "next";
 import { connection } from "next/server";
 import { cacheLife, cacheTag } from "next/cache";
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-static";
 export const revalidate = 30;
 
 export const metadata: Metadata = {
@@ -48,7 +48,6 @@ async function LoadBlogList() {
     // cacheLife("hours");
     // cacheTag("blog");
 
-    await connection();
     const data = await fetchQuery(api.posts.getPosts);
     return (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
