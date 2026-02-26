@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSessionCookie } from "better-auth/cookies";
+import { isAuthenticated } from "@/lib/auth-server";
 
 export async function proxy(request: NextRequest) {
-	const sessionCookie = getSessionCookie(request);
-
-    // THIS IS NOT SECURE!
-    // This is the recommended approach to optimistically redirect users
-    // We recommend handling auth checks in each page/route
-	if (!sessionCookie) {
+    // This middleware uses `isAuthenticated` to securely check
+    // if a user has a valid session before allowing access
+    // to protected routes.
+	if (!(await isAuthenticated())) {
 		return NextResponse.redirect(new URL("/auth/login", request.url));
 	}
 

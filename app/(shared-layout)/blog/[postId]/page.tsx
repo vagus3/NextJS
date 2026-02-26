@@ -51,9 +51,9 @@ export default async function PostIdRoute({params } : PostIdRouteProps)
         await fetchQuery(api.presence.getUserId, {}, { token }),
     ]);
 
-    if(!userId){
-        return redirect("/auth/login");
-    }
+    // if(!userId){
+    //     return redirect("/auth/login");
+    // }
 
     if (!post) {
         return (
@@ -101,7 +101,7 @@ export default async function PostIdRoute({params } : PostIdRouteProps)
 
             <Separator className="my-8"/>
 
-            <p className="text-lg leading-relaxed 
+            <p className="text-lg leading-relaxed   
             text-muted-foreground line-clamp-3">{post.body}</p>
             <Separator className="my-8"/>
 
