@@ -9,7 +9,6 @@ import { Separator } from "@/components/ui/separator";
 import { CommentSection } from "@/components/web/CommentSection";
 import { Metadata } from "next";
 import { PostPresence } from "@/components/web/Postprecence";
-import { redirect } from "next/navigation";
 
 
 interface PostIdRouteProps{

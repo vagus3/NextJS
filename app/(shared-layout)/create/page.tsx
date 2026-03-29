@@ -37,7 +37,7 @@ export default function CreateRoute() {
     startTransition(async () => {
       await createBlogAction(values);
       toast.success("Post created successfully!");
-      router.push("/");
+      router.push("/create");
     });
   }
   return (
