@@ -5,6 +5,7 @@ import { DataModel } from "./_generated/dataModel";
 import { query } from "./_generated/server";
 import { betterAuth } from "better-auth";
 import authConfig from "./auth.config";
+import { sendPasswordResetEmail } from "../lib/auth-email";
 
 const siteUrl = process.env.SITE_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 const authSecret = process.env.BETTER_AUTH_SECRET;
@@ -26,6 +27,15 @@ export const createAuth = (ctx: GenericCtx<DataModel>) => {
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: false,
+      resetPasswordTokenExpiresIn: 60 * 30,
+      revokeSessionsOnPasswordReset: true,
+      sendResetPassword: async ({ user, url }) => {
+        await sendPasswordResetEmail({
+          name: user.name,
+          to: user.email,
+          url,
+        });
+      },
     },
     plugins: [
       // The Convex plugin is required for Convex compatibility

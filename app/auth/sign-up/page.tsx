@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/components/ui/language-provider";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -14,17 +15,18 @@ import { useTransition } from "react";
 import { Loader2 } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-function getAuthErrorMessage(error: unknown) {
+function getAuthErrorMessage(error: unknown, fallback: string) {
   if (typeof error === "string") return error;
   if (error && typeof error === "object") {
     const e = error as { error?: { message?: string }; message?: string };
-    return e.error?.message ?? e.message ?? "Please try again.";
+    return e.error?.message ?? e.message ?? fallback;
   }
-  return "Please try again.";
+  return fallback;
 }
 
 export default function SignUpPage() {
   const [isPending, startTransition] = useTransition();
+  const { messages } = useLanguage();
   const router = useRouter();
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
@@ -44,12 +46,12 @@ export default function SignUpPage() {
         password: data.password,
         fetchOptions: {
           onSuccess: () => {
-            toast.success("Account created successfully!");
+            toast.success(messages.auth.signUpSuccess);
             router.push("/");
           },
           onError: (error) => {
             console.error("Sign up failed", error);
-            toast.error(`Sign up failed: ${getAuthErrorMessage(error)}`);
+            toast.error(`${messages.auth.signUpFailed}: ${getAuthErrorMessage(error, messages.common.requestFailed)}`);
           },
         },
       });
@@ -59,8 +61,8 @@ export default function SignUpPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Sign Up</CardTitle>
-        <CardDescription>Sign up to create an account</CardDescription>
+        <CardTitle>{messages.auth.signUpTitle}</CardTitle>
+        <CardDescription>{messages.auth.signUpDescription}</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={form.handleSubmit(onSubmit)} autoComplete="off">
@@ -70,12 +72,12 @@ export default function SignUpPage() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel>Name</FieldLabel>
+                  <FieldLabel>{messages.common.name}</FieldLabel>
                   <Input
                     type="text"
                     autoComplete="off"
                     aria-invalid={fieldState.invalid}
-                    placeholder="Name"
+                    placeholder={messages.common.name}
                     {...field}
                   />
                   {fieldState.invalid && (
@@ -89,7 +91,7 @@ export default function SignUpPage() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel>Email</FieldLabel>
+                  <FieldLabel>{messages.common.email}</FieldLabel>
                   <Input
                     type="email"
                     autoComplete="username"
@@ -111,7 +113,7 @@ export default function SignUpPage() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel>Password</FieldLabel>
+                  <FieldLabel>{messages.common.password}</FieldLabel>
                   <Input
                     type="password"
                     autoComplete="new-password"
@@ -129,10 +131,10 @@ export default function SignUpPage() {
               {isPending ? (
                 <>
                   <Loader2 className="size-4 animate-spin" />
-                  <span className="sr-only">Loading...</span>
+                  <span className="sr-only">{messages.common.loading}</span>
                 </>
               ) : (
-                "Sign Up"
+                messages.auth.signUpTitle
               )}
             </Button>
           </FieldGroup>

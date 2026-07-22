@@ -1,19 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { ConvexClientProvider } from "../components/web/ConvexClientProvider";
 import { ThemeProvider } from "@/components/ui/theme-provider";
+import { LanguageProvider } from "@/components/ui/language-provider";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -26,20 +16,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html lang="ko" suppressHydrationWarning>
+      <body className="antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-        <main className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
-        <ConvexClientProvider>{children}</ConvexClientProvider>
-        </main>
-        <Toaster closeButton />
+          <LanguageProvider>
+            <main className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
+              <ConvexClientProvider>{children}</ConvexClientProvider>
+            </main>
+            <Toaster closeButton />
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

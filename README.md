@@ -20,6 +20,29 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Auth Email Setup
+
+Password reset emails are sent through Resend.
+
+Required environment variables:
+
+```bash
+BETTER_AUTH_SECRET=your-secret
+SITE_URL=http://localhost:3000
+RESEND_API_KEY=re_xxxxxxxxx
+AUTH_EMAIL_FROM=Your App <no-reply@your-domain.com>
+AUTH_EMAIL_SITE_NAME=NextMaster
+```
+
+For Convex cloud/dev deployments, set the mail-related secrets in Convex as well:
+
+```bash
+npx convex env set SITE_URL http://localhost:3000
+npx convex env set RESEND_API_KEY re_xxxxxxxxx
+npx convex env set AUTH_EMAIL_FROM "Your App <no-reply@your-domain.com>"
+npx convex env set AUTH_EMAIL_SITE_NAME NextMaster
+```
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

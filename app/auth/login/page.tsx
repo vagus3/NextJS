@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/components/ui/language-provider";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -10,21 +11,23 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { Loader2 } from "lucide-react";
 
-function getAuthErrorMessage(error: unknown) {
+function getAuthErrorMessage(error: unknown, fallback: string) {
   if (typeof error === "string") return error;
   if (error && typeof error === "object") {
     const e = error as { error?: { message?: string }; message?: string };
-    return e.error?.message ?? e.message ?? "Please try again.";
+    return e.error?.message ?? e.message ?? fallback;
   }
-  return "Please try again.";
+  return fallback;
 }
 
 export default function LoginPage() {
   const [isPending, startTransition] = useTransition();
+  const { messages } = useLanguage();
   const router = useRouter();
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -42,12 +45,12 @@ export default function LoginPage() {
         password: data.password,
         fetchOptions: {
           onSuccess: () => {
-            toast.success("Logged In successfully!");
+            toast.success(messages.auth.loginSuccess);
             router.push("/");
           },
           onError: (error) => {
             console.error("Login failed", error);
-            toast.error(`Login failed: ${getAuthErrorMessage(error)}`);
+            toast.error(`${messages.auth.loginFailed}: ${getAuthErrorMessage(error, messages.common.requestFailed)}`);
           },
         },
       });
@@ -57,10 +60,10 @@ export default function LoginPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Login</CardTitle>
-        <CardDescription>Sign in to your account</CardDescription>
+        <CardTitle>{messages.auth.loginTitle}</CardTitle>
+        <CardDescription>{messages.auth.loginDescription}</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-6">
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
             <Controller
@@ -68,7 +71,7 @@ export default function LoginPage() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel>Email</FieldLabel>
+                  <FieldLabel>{messages.common.email}</FieldLabel>
                   <Input
                     type="email"
                     autoComplete="username"
@@ -90,7 +93,7 @@ export default function LoginPage() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel>Password</FieldLabel>
+                  <FieldLabel>{messages.common.password}</FieldLabel>
                   <Input
                     type="password"
                     autoComplete="current-password"
@@ -108,14 +111,29 @@ export default function LoginPage() {
               {isPending ? (
                 <>
                   <Loader2 className="size-4 animate-spin" />
-                  <span className="sr-only">Loading...</span>
+                  <span className="sr-only">{messages.common.loading}</span>
                 </>
               ) : (
-                "Login"
+                messages.auth.loginTitle
               )}
             </Button>
           </FieldGroup>
         </form>
+        <div className="flex items-center justify-center gap-3 text-sm">
+          <Link
+            href="/auth/find-id"
+            className="text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+          >
+            {messages.auth.findId}
+          </Link>
+          <span className="text-muted-foreground/60">|</span>
+          <Link
+            href="/auth/forgot-password"
+            className="text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+          >
+            {messages.auth.forgotPassword}
+          </Link>
+        </div>
       </CardContent>
     </Card>
   );
